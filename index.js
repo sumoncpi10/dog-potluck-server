@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.dteuxtf.mongodb.net/?retryWrites=true&w=majority`;
-console.log(uri);
+// console.log(uri);
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 async function run() {
@@ -18,6 +18,7 @@ async function run() {
         await client.connect();
         const userCollection = client.db('dogputluck').collection('users');
         const productCollection = client.db('dogputluck').collection('product');
+        const reviewCollection = client.db('dogputluck').collection('review');
 
         // get single user 
         app.get('/user/:username', async (req, res) => {
@@ -48,6 +49,21 @@ async function run() {
             const cursor = productCollection.find(query);
             const products = await cursor.toArray();
             res.send(products)
+        });
+        // add review 
+        app.post('/reviewAdd', async (req, res) => {
+            const newReview = req.body;
+            console.log('adding new Review', newReview);
+            const result = await reviewCollection.insertOne(newReview);
+            res.send(result);
+        });
+        // get review 
+        app.get('/review/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { ProductID: id };
+            const cursor = reviewCollection.find(query);
+            const review = await cursor.toArray();
+            res.send(review);
         });
     }
     finally {
