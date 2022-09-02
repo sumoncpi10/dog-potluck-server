@@ -50,6 +50,28 @@ async function run() {
             const products = await cursor.toArray();
             res.send(products)
         });
+        // get  product by collection type
+        app.get('/productType/:collection_type', async (req, res) => {
+            const collection_type = req.params.collection_type;
+            const query = { collection_type };
+            const cursor = await productCollection.find(query);
+            const products = await cursor.limit(8).toArray();
+            res.send(products);
+        })
+        // get Home product 
+        app.get('/homeProducts', async (req, res) => {
+            const query = {};
+            const cursor = productCollection.find(query);
+            const products = await cursor.sort({ collection_type: -1 }).limit(8).toArray();
+            res.send(products);
+        });
+        // Delete Product 
+        app.delete('/product/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await productCollection.deleteOne(query);
+            res.send(result);
+        })
         // add review 
         app.post('/reviewAdd', async (req, res) => {
             const newReview = req.body;
