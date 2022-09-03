@@ -19,6 +19,7 @@ async function run() {
         const userCollection = client.db('dogputluck').collection('users');
         const productCollection = client.db('dogputluck').collection('product');
         const reviewCollection = client.db('dogputluck').collection('review');
+        const questCollection = client.db('dogputluck').collection('quest');
 
         // get single user 
         app.get('/user/:username', async (req, res) => {
@@ -34,6 +35,13 @@ async function run() {
             const newProduct = req.body;
             console.log('adding new Product', newProduct);
             const result = await productCollection.insertOne(newProduct);
+            res.send(result);
+        });
+        // add Quest 
+        app.post('/questAdd', async (req, res) => {
+            const newProduct = req.body;
+            console.log('adding new Quest', newProduct);
+            const result = await questCollection.insertOne(newProduct);
             res.send(result);
         });
         // get Single product 
