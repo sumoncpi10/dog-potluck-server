@@ -43,6 +43,21 @@ async function run() {
             const product = await productCollection.findOne(query);
             res.send(product);
         })
+        // Update product 
+
+        app.put('/product/:id', async (req, res) => {
+            const newProduct = req.body;
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set:
+                    newProduct
+
+            }
+            const product = await productCollection.updateOne(filter, updatedDoc, options);
+            res.send(product);
+        })
         // get product 
         app.get('/products', async (req, res) => {
             const query = {};
@@ -53,7 +68,8 @@ async function run() {
         // get  product by collection type
         app.get('/productType/:collection_type', async (req, res) => {
             const collection_type = req.params.collection_type;
-            const query = { collection_type };
+            // const query = { collection_type   };
+            const query = { $or: [{ collection_type }, { collection_type: 'all' }] };
             const cursor = await productCollection.find(query);
             const products = await cursor.limit(8).toArray();
             res.send(products);
