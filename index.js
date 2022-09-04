@@ -68,10 +68,20 @@ async function run() {
         })
         // get product 
         app.get('/products', async (req, res) => {
+            const page = parseInt(req.query.page);
+            const size = parseInt(req.query.size);
+            console.log('query', req.query);
             const query = {};
             const cursor = productCollection.find(query);
-            const products = await cursor.toArray();
-            res.send(products)
+            let products;
+            if (page || size) {
+                products = await cursor.skip(page * size).limit(size).toArray();
+            }
+            else {
+                products = await cursor.toArray();
+            }
+
+            res.send(products);
         });
         // get  product by collection type
         app.get('/productType/:collection_type', async (req, res) => {
@@ -80,6 +90,15 @@ async function run() {
             const query = { $or: [{ collection_type }, { collection_type: 'all' }] };
             const cursor = await productCollection.find(query);
             const products = await cursor.limit(8).toArray();
+            res.send(products);
+        })
+        // get  product by collection type
+        app.get('/dealsOfTheDay/:deals', async (req, res) => {
+            const deals = req.params.deals;
+            // const query = { collection_type   };
+            const query = { dealsOfDay: deals };
+            const cursor = await productCollection.find(query);
+            const products = await cursor.limit(2).toArray();
             res.send(products);
         })
         // get Home product 
@@ -111,6 +130,17 @@ async function run() {
             const review = await cursor.toArray();
             res.send(review);
         });
+
+        // Pagination Work
+
+        // page Count
+        app.get('/productCount', async (req, res) => {
+            const query = {};
+            const cursor = productCollection.find(query);
+            const count = await cursor.count();
+            res.send({ count });
+        });
+
     }
     finally {
         // await client.close();
