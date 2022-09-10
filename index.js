@@ -20,6 +20,7 @@ async function run() {
         const productCollection = client.db('dogputluck').collection('product');
         const reviewCollection = client.db('dogputluck').collection('review');
         const questCollection = client.db('dogputluck').collection('quest');
+        const blogCollection = client.db('dogputluck').collection('blog');
 
         // get single user 
         app.get('/user/:username', async (req, res) => {
@@ -70,8 +71,15 @@ async function run() {
         app.get('/products', async (req, res) => {
             const page = parseInt(req.query.page);
             const size = parseInt(req.query.size);
+            const category = req.query.category;
             console.log('query', req.query);
-            const query = {};
+            let query = '';
+            if (category == 'shop') {
+                query = {};
+            }
+            else {
+                query = { category };
+            }
             const cursor = productCollection.find(query);
             let products;
             if (page || size) {
@@ -86,7 +94,7 @@ async function run() {
         // get  product by collection type
         app.get('/productType/:collection_type', async (req, res) => {
             const collection_type = req.params.collection_type;
-            // const query = { collection_type   };
+
             const query = { $or: [{ collection_type }, { collection_type: 'all' }] };
             const cursor = await productCollection.find(query);
             const products = await cursor.limit(8).toArray();
@@ -95,7 +103,7 @@ async function run() {
         // get  product by collection type
         app.get('/dealsOfTheDay/:deals', async (req, res) => {
             const deals = req.params.deals;
-            // const query = { collection_type   };
+
             const query = { dealsOfDay: deals };
             const cursor = await productCollection.find(query);
             const products = await cursor.limit(2).toArray();
@@ -135,12 +143,41 @@ async function run() {
 
         // page Count
         app.get('/productCount', async (req, res) => {
-            const query = {};
+            const category = req.query.category;
+            // console.log('query', req.query);
+            let query = '';
+            if (category == 'shop') {
+                query = {};
+            }
+            else {
+                query = { category };
+            }
+
             const cursor = productCollection.find(query);
             const count = await cursor.count();
             res.send({ count });
         });
-
+        // add Blog 
+        app.post('/blogAdd', async (req, res) => {
+            const newProduct = req.body;
+            console.log('adding new Blog', newProduct);
+            const result = await blogCollection.insertOne(newProduct);
+            res.send(result);
+        });
+        // get Blog 
+        app.get('/blogs', async (req, res) => {
+            const query = {};
+            const cursor = blogCollection.find(query);
+            const products = await cursor.toArray();
+            res.send(products);
+        });
+        // get Single blog 
+        app.get('/blog/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const product = await blogCollection.findOne(query);
+            res.send(product);
+        })
     }
     finally {
         // await client.close();
