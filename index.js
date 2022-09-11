@@ -166,9 +166,20 @@ async function run() {
         });
         // get Blog 
         app.get('/blogs', async (req, res) => {
+
+
+            const limit = parseInt(req.query.limit);
             const query = {};
             const cursor = blogCollection.find(query);
-            const products = await cursor.toArray();
+
+
+            let products = '';
+            if (limit == 2) {
+                products = await cursor.limit(limit).toArray();
+            }
+            else {
+                products = await cursor.toArray();
+            }
             res.send(products);
         });
         // get Single blog 
