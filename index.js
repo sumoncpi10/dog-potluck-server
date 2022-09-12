@@ -72,17 +72,24 @@ async function run() {
             const page = parseInt(req.query.page);
             const size = parseInt(req.query.size);
             const category = req.query.category;
+            const view = req.query.view;
             console.log('query', req.query);
             let query = '';
             if (category == 'shop') {
                 query = {};
+            }
+            else if (view == 'detail') {
+                query = { category };
             }
             else {
                 query = { category };
             }
             const cursor = productCollection.find(query);
             let products;
-            if (page || size) {
+            if (view) {
+                products = await cursor.limit(4).toArray();
+            }
+            else if (page || size) {
                 products = await cursor.skip(page * size).limit(size).toArray();
             }
             else {
