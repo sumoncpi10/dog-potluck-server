@@ -188,6 +188,20 @@ async function run() {
             const query = { _id: ObjectId(id) };
             const product = await blogCollection.findOne(query);
             res.send(product);
+        });
+        // get Messages  
+        app.get('/message', async (req, res) => {
+            const query = {};
+            const cursor = questCollection.find(query);
+            const products = await cursor.toArray();
+            res.send(products);
+        });
+        // Delete Message 
+        app.delete('/quest/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await questCollection.deleteOne(query);
+            res.send(result);
         })
     }
     finally {
