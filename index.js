@@ -24,7 +24,7 @@ async function run() {
 
         // get single user 
         app.get('/user/:username', async (req, res) => {
-            console.log(req.params.username)
+            // console.log(req.params.username)
             const username = req.params.username;
             const query = { username };
             const user = await userCollection.findOne(query);
@@ -34,14 +34,14 @@ async function run() {
         // add product 
         app.post('/productAdd', async (req, res) => {
             const newProduct = req.body;
-            console.log('adding new Product', newProduct);
+            // console.log('adding new Product', newProduct);
             const result = await productCollection.insertOne(newProduct);
             res.send(result);
         });
         // add Quest 
         app.post('/questAdd', async (req, res) => {
             const newProduct = req.body;
-            console.log('adding new Quest', newProduct);
+            // console.log('adding new Quest', newProduct);
             const result = await questCollection.insertOne(newProduct);
             res.send(result);
         });
@@ -73,7 +73,7 @@ async function run() {
             const size = parseInt(req.query.size);
             const category = req.query.category;
             const view = req.query.view;
-            console.log('query', req.query);
+            // console.log('query', req.query);
             let query = '';
             if (category == 'shop') {
                 query = {};
@@ -133,7 +133,7 @@ async function run() {
         // add review 
         app.post('/reviewAdd', async (req, res) => {
             const newReview = req.body;
-            console.log('adding new Review', newReview);
+            // console.log('adding new Review', newReview);
             const result = await reviewCollection.insertOne(newReview);
             res.send(result);
         });
@@ -167,7 +167,7 @@ async function run() {
         // add Blog 
         app.post('/blogAdd', async (req, res) => {
             const newProduct = req.body;
-            console.log('adding new Blog', newProduct);
+            // console.log('adding new Blog', newProduct);
             const result = await blogCollection.insertOne(newProduct);
             res.send(result);
         });
