@@ -21,6 +21,7 @@ async function run() {
         const reviewCollection = client.db('dogputluck').collection('review');
         const questCollection = client.db('dogputluck').collection('quest');
         const blogCollection = client.db('dogputluck').collection('blog');
+        const aboutCollection = client.db('dogputluck').collection('about');
 
         // get single user 
         app.get('/user/:username', async (req, res) => {
@@ -209,6 +210,34 @@ async function run() {
             const query = { _id: ObjectId(id) };
             const result = await questCollection.deleteOne(query);
             res.send(result);
+        })
+        // get About 
+        app.get('/abouts', async (req, res) => {
+            const query = {};
+            const cursor = aboutCollection.find(query);
+            const products = await cursor.toArray();
+            res.send(products);
+        })
+        // get About By ID 
+        app.get('/about/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const product = await aboutCollection.findOne(query);
+            res.send(product);
+        })
+        // Update About 
+
+        app.put('/about/:id', async (req, res) => {
+            const newProduct = req.body;
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set:
+                    newProduct
+            }
+            const product = await aboutCollection.updateOne(filter, updatedDoc, options);
+            res.send(product);
         })
     }
     finally {
