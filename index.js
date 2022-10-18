@@ -182,7 +182,7 @@ async function run() {
 
 
             let products = '';
-            if (limit == 2) {
+            if (limit == 3) {
                 products = await cursor.limit(limit).toArray();
             }
             else {
@@ -197,6 +197,13 @@ async function run() {
             const product = await blogCollection.findOne(query);
             res.send(product);
         });
+        // Delete Message 
+        app.delete('/blog/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await blogCollection.deleteOne(query);
+            res.send(result);
+        })
         // get Messages  
         app.get('/message', async (req, res) => {
             const query = {};
