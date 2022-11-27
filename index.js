@@ -54,7 +54,6 @@ async function run() {
             res.send(product);
         })
         // Update product 
-
         app.put('/product/:id', async (req, res) => {
             const newProduct = req.body;
             const id = req.params.id;
@@ -197,6 +196,19 @@ async function run() {
             const product = await blogCollection.findOne(query);
             res.send(product);
         });
+        // Update product 
+        app.put('/blog/:id', async (req, res) => {
+            const newProduct = req.body;
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set:
+                    newProduct
+            }
+            const product = await blogCollection.updateOne(filter, updatedDoc, options);
+            res.send(product);
+        })
         // Delete Message 
         app.delete('/blog/:id', async (req, res) => {
             const id = req.params.id;
