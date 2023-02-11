@@ -22,6 +22,7 @@ async function run() {
         const questCollection = client.db('dogputluck').collection('quest');
         const blogCollection = client.db('dogputluck').collection('blog');
         const aboutCollection = client.db('dogputluck').collection('about');
+        const buttonLinkCollection = client.db('dogputluck').collection('buttonLink');
 
         // get single user 
         app.get('/user/:username', async (req, res) => {
@@ -229,6 +230,29 @@ async function run() {
             const query = { _id: ObjectId(id) };
             const result = await questCollection.deleteOne(query);
             res.send(result);
+        })
+        // get Button Link 
+        app.get('/ButtonLink/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email };
+
+            const product = await buttonLinkCollection.findOne(query);
+            res.send(product);
+
+        })
+        // Update Button Link 
+
+        app.put('/updateButtonLink/:id', async (req, res) => {
+            const newProduct = req.body;
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set:
+                    newProduct
+            }
+            const product = await buttonLinkCollection.updateOne(filter, updatedDoc, options);
+            res.send(product);
         })
         // get About 
         app.get('/abouts', async (req, res) => {
